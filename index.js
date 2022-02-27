@@ -19,7 +19,7 @@ app.use(cors({ origin: 'http://localhost:3000' }))
 // GMaps code
 const client = new Client({});
 
-const placeDetailsSearch = (res, placeId) =>
+const placeDetailsSearch = (placeId) =>
   new Promise((resolve, reject) =>
     client
       .placeDetails({
@@ -59,7 +59,7 @@ const placeTextSearch = (res, place) =>
     .then((r) => {
       const results = r.data.results
       if (results.length > 0) {
-        const placeDetailsSearchCalls = results.map((result, i) => placeDetailsSearch(res, results[i].place_id))
+        const placeDetailsSearchCalls = results.map((result, i) => placeDetailsSearch(results[i].place_id))
         Promise.all([...placeDetailsSearchCalls])
           .then((placeDetails) => {
             res.json(placeDetails)
