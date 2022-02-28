@@ -1,22 +1,17 @@
 // Allows loading consts from .env
 require('dotenv').config();
-const express = require('express')
-const app = express()
-const port = 3001
-const cors = require('cors')
-const mcache = require('memory-cache')
-const { Client } = require('@googlemaps/google-maps-services-js')
+const express = require('express');
+const app = express();
+const port = 3001;
+const cors = require('cors');
+const cache = require('memory-cache');
+const { body } = require('express-validator');
+const { Client } = require('@googlemaps/google-maps-services-js');
 
-app.use(express.json())
-app.use(cors({ origin: 'http://localhost:3000' }))
+app.use(express.json());
+app.use(cors({origin: 'http://localhost:3000'}));
 
-// const cache = duration => {
-//   return (req, res, next) => {
-
-//   }
-// }
-
-// GMaps code
+// GMaps client
 const client = new Client({});
 
 const placeDetailsSearch = (placeId) =>
@@ -25,31 +20,32 @@ const placeDetailsSearch = (placeId) =>
       .placeDetails({
         params: {
           fields: [
-            "name",
-            "formatted_address",
-            "formatted_phone_number",
-            "website"
+            'name',
+            'formatted_address',
+            'formatted_phone_number',
+            'website',
           ],
           key: process.env.GOOGLE_MAPS_API_KEY,
-          place_id: placeId
+          place_id: placeId,
         },
         timeout: 2000, // milliseconds
       })
-      .then((r) => {
+      .then((r) =>
         resolve(r.data)
-      })
+      )
       .catch((e) =>
         reject(console.log(e))
-      ))
+      )
+    );
 
 const placeTextSearch = (res, place) =>
   client
     .textSearch({
       params: {
-        // Set location to Wellington
+      // Set default location to Wellington
         locations: [{
           lat: -41.228241,
-          lng: 174.90512
+          lng: 174.90512,
         }],
         query: `mental health in ${place}`,
         key: process.env.GOOGLE_MAPS_API_KEY,
@@ -57,27 +53,29 @@ const placeTextSearch = (res, place) =>
       timeout: 2000, // milliseconds
     })
     .then((r) => {
-      const results = r.data.results
+      const results = r.data.results;
       if (results.length > 0) {
-        const placeDetailsSearchCalls = results.map((result, i) => placeDetailsSearch(results[i].place_id))
+        const placeDetailsSearchCalls = results.map((result, i) =>
+          placeDetailsSearch(results[i].place_id));
         Promise.all([...placeDetailsSearchCalls])
           .then((placeDetails) => {
-            res.json(placeDetails)
+            // cache expires in 12 hrs
+            cache.put(place, placeDetails, 43200000);
+            res.json(placeDetails);
           })
-          .catch((e) =>
-            console.log(e)
-          );
+          .catch((e) => console.log(e));
       }
     })
-    .catch((e) => console.log(e)
-    )
+    .catch((e) => console.log(e));
 
-
-app.post('/maps', (req, res) => {
-  // Need to sanitize
-  placeTextSearch(res, req.body.place)
-})
+app.post('/maps', 
+  body('place').not().isEmpty().trim().escape().toLowerCase(), (req, res) => {
+  const place = req.body.place;
+  cache.get(place) != null ? 
+    res.send(cache.get(place)) :
+    placeTextSearch(res, place);
+});
 
 app.listen(port, () => {
-  console.log(`App listening on port ${port}`)
-})
+  console.log(`App listening on port ${port}`);
+});
