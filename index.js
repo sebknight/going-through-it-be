@@ -41,7 +41,7 @@ const placeDetailsSearch = (placeId) =>
           key: process.env.GOOGLE_MAPS_API_KEY,
           place_id: placeId,
         },
-        timeout: 5000, // milliseconds
+        timeout: 10000, // milliseconds
       })
       .then((r) =>
         resolve(r.data)
@@ -63,7 +63,7 @@ const placeTextSearch = (res, place) =>
         query: `mental health in ${place}`,
         key: process.env.GOOGLE_MAPS_API_KEY,
       },
-      timeout: 5000, // milliseconds
+      timeout: 10000, // milliseconds
     })
     .then((r) => {
       const response = r.data;
@@ -79,13 +79,13 @@ const placeTextSearch = (res, place) =>
           })
           .catch((e) => {
             console.error(e);
-            res.status(500).send(e);
+            res.status(500).send("Oops, something broke :(");
           });
       }
     })
     .catch((e) => {
       console.error(e);
-      res.status(500).send(e);
+      res.status(500).send("Oops, something broke :(");
     });
 
 app.post('/places', 
