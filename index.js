@@ -9,7 +9,7 @@ const { body } = require('express-validator');
 const { Client } = require('@googlemaps/google-maps-services-js');
 
 app.use(express.json());
-app.use(cors({origin: 'http://localhost:3000'}));
+app.use(cors({origin: 'https://going-through-it.netlify.app'}));
 
 // GMaps client
 const client = new Client({});
