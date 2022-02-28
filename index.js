@@ -1,4 +1,4 @@
-// Allows loading consts from .env
+// Allows loading conf from .env
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -53,8 +53,9 @@ const placeTextSearch = (res, place) =>
       timeout: 2000, // milliseconds
     })
     .then((r) => {
-      if (results.status === 'OK') {
-        const results = r.data.results;
+      const response = r.data;
+      if (response.status === 'OK') {
+        const results = response.results;
         const placeDetailsSearchCalls = results.map((result, i) =>
           placeDetailsSearch(results[i].place_id));
         Promise.all([...placeDetailsSearchCalls])
@@ -63,7 +64,10 @@ const placeTextSearch = (res, place) =>
             cache.put(place, placeDetails, 43200000);
             res.json(placeDetails);
           })
-          .catch((e) => console.log(e));
+          .catch((e) => {
+            console.log(e);
+            res.sendStatus(500);
+          });
       }
     })
     .catch((e) => {
@@ -71,9 +75,10 @@ const placeTextSearch = (res, place) =>
       res.sendStatus(500);
     });
 
-app.post('/maps', 
-  body('place').not().isEmpty().trim().escape().toLowerCase(), (req, res) => {
+app.post('/places', 
+body('place').trim().escape().toLowerCase(), (req, res) => {
   const place = req.body.place;
+  if (place === '') res.send([]);
   cache.get(place) != null ? 
     res.send(cache.get(place)) :
     placeTextSearch(res, place);
