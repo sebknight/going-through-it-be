@@ -34,7 +34,7 @@ const placeDetailsSearch = (placeId) =>
         resolve(r.data)
       )
       .catch((e) =>
-        reject(console.log(e))
+        reject((e) => console.log(e))
       )
     );
 
@@ -53,8 +53,8 @@ const placeTextSearch = (res, place) =>
       timeout: 2000, // milliseconds
     })
     .then((r) => {
-      const results = r.data.results;
-      if (results.length > 0) {
+      if (results.status === 'OK') {
+        const results = r.data.results;
         const placeDetailsSearchCalls = results.map((result, i) =>
           placeDetailsSearch(results[i].place_id));
         Promise.all([...placeDetailsSearchCalls])
@@ -66,7 +66,10 @@ const placeTextSearch = (res, place) =>
           .catch((e) => console.log(e));
       }
     })
-    .catch((e) => console.log(e));
+    .catch((e) => {
+      console.log(e);
+      res.sendStatus(500);
+    });
 
 app.post('/maps', 
   body('place').not().isEmpty().trim().escape().toLowerCase(), (req, res) => {
