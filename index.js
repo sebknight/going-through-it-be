@@ -66,13 +66,13 @@ const placeTextSearch = (res, place) =>
           })
           .catch((e) => {
             console.error(e);
-            res.sendStatus(500);
+            res.send(e);
           });
       }
     })
     .catch((e) => {
       console.error(e);
-      res.sendStatus(500);
+      res.send(e);
     });
 
 app.post('/places', 
