@@ -34,7 +34,7 @@ const placeDetailsSearch = (placeId) =>
         resolve(r.data)
       )
       .catch((e) =>
-        reject((e) => console.log(e))
+        reject(console.log(e))
       )
     );
 
