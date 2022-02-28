@@ -67,14 +67,14 @@ const placeTextSearch = (res, place) =>
           .catch((e) => {
             console.error(e);
             // Keeping error response vague for security reasons
-            res.sendStatus(500);
+            res.send(e);
           });
       }
     })
     .catch((e) => {
       console.error(e);
       // Keeping error response vague for security reasons
-      res.sendStatus(500);
+      res.send(e);
     });
 
 app.post('/places', 
