@@ -34,7 +34,7 @@ const placeDetailsSearch = (placeId) =>
         resolve(r.data)
       )
       .catch((e) =>
-        reject(console.log(e))
+        reject(console.error(e))
       )
     );
 
@@ -65,13 +65,13 @@ const placeTextSearch = (res, place) =>
             res.json(placeDetails);
           })
           .catch((e) => {
-            console.log(e);
+            console.error(e);
             res.sendStatus(500);
           });
       }
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       res.sendStatus(500);
     });
 
