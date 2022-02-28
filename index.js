@@ -12,7 +12,18 @@ app.use(express.json());
 app.use(cors({origin: 'https://going-through-it.netlify.app'}));
 
 // GMaps client
-const client = new Client({});
+const clientConfig = {
+  proxy: {
+    protocol: 'http',
+    host: process.env.FIXIE_URL,
+    port: 80,
+    auth: {
+      username: 'fixie',
+      password: process.env.FIXIE_TOKEN
+    }
+  }
+}
+const client = new Client({clientConfig});
 
 const placeDetailsSearch = (placeId) =>
   new Promise((resolve, reject) =>
