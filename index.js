@@ -23,7 +23,8 @@ const clientConfig = {
     }
   }
 }
-const client = new Client({clientConfig});
+const axiosInstance = axios.create(clientConfig)
+const client = new Client({axiosInstance});
 
 const placeDetailsSearch = (placeId) =>
   new Promise((resolve, reject) =>
