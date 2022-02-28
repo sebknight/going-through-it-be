@@ -16,7 +16,7 @@ app.use(cors({origin: 'https://going-through-it.netlify.app'}));
 const clientConfig = {
   proxy: {
     protocol: 'http',
-    host: process.env.FIXIE_URL,
+    host: process.env.FIXIE_HOST,
     port: 80,
     auth: {
       username: 'fixie',
