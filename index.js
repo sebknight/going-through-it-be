@@ -41,7 +41,7 @@ const placeDetailsSearch = (placeId) =>
           key: process.env.GOOGLE_MAPS_API_KEY,
           place_id: placeId,
         },
-        timeout: 2000, // milliseconds
+        timeout: 5000, // milliseconds
       })
       .then((r) =>
         resolve(r.data)
@@ -63,7 +63,7 @@ const placeTextSearch = (res, place) =>
         query: `mental health in ${place}`,
         key: process.env.GOOGLE_MAPS_API_KEY,
       },
-      timeout: 2000, // milliseconds
+      timeout: 5000, // milliseconds
     })
     .then((r) => {
       const response = r.data;
