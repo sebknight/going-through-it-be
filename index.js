@@ -69,6 +69,7 @@ const placeTextSearch = (res, place) =>
       const response = r.data;
       if (response.status === 'OK') {
         const results = response.results;
+        console.log(results)
         const placeDetailsSearchCalls = results.map((result, i) =>
           placeDetailsSearch(results[i].place_id));
         Promise.all([...placeDetailsSearchCalls])
