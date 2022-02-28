@@ -1,8 +1,8 @@
-// Allows loading conf from .env
-require('dotenv').config();
+// Allows loading conf from .env - for local runs
+// require('dotenv').config();
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3001; // 3001 for local runs
 const cors = require('cors');
 const cache = require('memory-cache');
 const { body } = require('express-validator');
@@ -66,13 +66,15 @@ const placeTextSearch = (res, place) =>
           })
           .catch((e) => {
             console.error(e);
-            res.send(e);
+            // Keeping error response vague for security reasons
+            res.sendStatus(500);
           });
       }
     })
     .catch((e) => {
       console.error(e);
-      res.send(e);
+      // Keeping error response vague for security reasons
+      res.sendStatus(500);
     });
 
 app.post('/places', 
